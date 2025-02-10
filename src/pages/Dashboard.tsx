@@ -40,7 +40,7 @@ const Dashboard: React.FC = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    toast.success("ออกจากระบบ");
+    toast.success("ออกจากระบบ เรียบร้อย");
   };
 
   return (

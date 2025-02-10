@@ -1,20 +1,16 @@
 import React from "react";
 
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import toast from "react-hot-toast";
 import { login } from "../features/auth/authSlice";
 import { Button, Form, Input } from "antd";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const onFinish = (values: { email: string; password: string }) => {
     // สำหรับโปรเจกต์นี้ สมมติว่าการเข้าสู่ระบบสำเร็จเมื่อมีข้อมูล
-    dispatch(login({ email: values.email }));
-    toast.success("เข้าสู่ระบบสำเร็จ!");
-    navigate("/");
+    dispatch(login({ email: values.email, password: values.password }));
   };
 
   return (
