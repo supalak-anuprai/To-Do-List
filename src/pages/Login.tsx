@@ -4,6 +4,12 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { login } from "../features/auth/authSlice";
 import { Button, Form, Input } from "antd";
+import {
+  SignedOut,
+  SignInButton,
+  // SignedIn,
+  // UserButton,
+} from "@clerk/clerk-react";
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,6 +25,9 @@ const Login: React.FC = () => {
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
           เข้าสู่ระบบ
         </h2>
+        <SignedOut>
+          <SignInButton />
+        </SignedOut>
         <Form name="login" onFinish={onFinish} className="space-y-6">
           <Form.Item
             name="email"
