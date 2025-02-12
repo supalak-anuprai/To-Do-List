@@ -2,14 +2,15 @@ import React from "react";
 
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { login } from "../features/auth/authSlice";
+import { login, loginWithGoogle } from "../features/auth/authSlice";
 import { Button, Form, Input } from "antd";
-import {
-  SignedOut,
-  SignInButton,
-  // SignedIn,
-  // UserButton,
-} from "@clerk/clerk-react";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+
+interface GoogleUser {
+  email: string;
+  picture: string;
+}
 
 const Login: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,16 +19,13 @@ const Login: React.FC = () => {
     // สำหรับโปรเจกต์นี้ สมมติว่าการเข้าสู่ระบบสำเร็จเมื่อมีข้อมูล
     dispatch(login({ email: values.email, password: values.password }));
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
         <h2 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
           เข้าสู่ระบบ
         </h2>
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
+
         <Form name="login" onFinish={onFinish} className="space-y-6">
           <Form.Item
             name="email"
@@ -50,6 +48,20 @@ const Login: React.FC = () => {
               className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500"
             />
           </Form.Item>
+
+          <GoogleLogin
+            onSuccess={(credentialResponse: any) => {
+              const user = jwtDecode<GoogleUser>(credentialResponse.credential);
+              dispatch(
+                loginWithGoogle({ email: user?.email, picture: user?.picture })
+              );
+            }}
+            onError={(e: void) => {
+              console.log("🚀 ~ e:", e);
+            }}
+            auto_select={true}
+          />
+
           <Form.Item>
             <Button
               type="primary"

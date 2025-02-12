@@ -1,4 +1,5 @@
 import React from "react";
+
 import { Form, Input, Button } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,13 +10,10 @@ import { RootState } from "../store";
 const Register: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const user = useSelector((state: RootState) => state.auth);
-
   // Regex ตรวจสอบรหัสผ่าน:
   // ต้องมีตัวพิมพ์เล็ก, ตัวพิมพ์ใหญ่, ตัวเลข, อักขระพิเศษ (@, #, $, %) และความยาว 8-64 ตัวอักษร
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%]).{8,64}$/;
-
   const onFinish = (values: {
     email: string;
     password: string;
@@ -33,15 +31,12 @@ const Register: React.FC = () => {
     }
     // สำหรับโปรเจกต์นี้ สมมติว่าการสมัครสมาชิกสำเร็จ
     dispatch(register({ email: values.email, password: values.password }));
-
     if (user?.users?.find((user) => user.email === values.email)) {
       return toast.error("มีผู้ใช้นี้อยู่แล้ว");
     }
-
     toast.success("สมัครสมาชิกสำเร็จ!");
     navigate("/");
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md p-6 bg-white rounded shadow">

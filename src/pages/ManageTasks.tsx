@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../store";
 import { deleteTask } from "../features/tasks/tasksSlice";
 import { Button, Empty, Modal } from "antd";
 import toast from "react-hot-toast";
 import DialogAddWork from "../components/DialogModal/dialogAddWork";
+import SearchAutocomplete from "../components/AutocompleteSearch/searchTasks";
 
 const ManageTasks: React.FC = () => {
-  const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const dispatch = useDispatch();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  const allTasks = useSelector((state: RootState) =>
+    state.tasks.tasks.filter((task) => task.userEmail === user?.email)
+  );
+
+  const [filteredTasks, setFilteredTasks] = useState(allTasks);
+
+  useEffect(() => {
+    if (JSON.stringify(allTasks) !== JSON.stringify(filteredTasks)) {
+      setFilteredTasks(allTasks);
+    }
+  }, [allTasks, filteredTasks]);
 
   const handleDelete = (id: string) => {
+    if (!user?.email) return;
+
     Modal.confirm({
       title: "คุณต้องการลบงานนี้หรือไม่?",
       content: "การลบงานจะไม่สามารถกู้คืนได้",
@@ -19,47 +34,45 @@ const ManageTasks: React.FC = () => {
       okType: "danger",
       cancelText: "ยกเลิก",
       onOk: () => {
-        dispatch(deleteTask(id));
+        dispatch(deleteTask({ id, userEmail: user.email }));
         toast.success("ลบงานแล้ว");
       },
     });
   };
 
-  const showModal = () => {
-    setIsModalVisible(true); // แสดง Modal
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false); // ปิด Modal
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <section className="mb-8">
+        <section className="mb-8 flex justify-between items-center">
           <Button
             type="primary"
-            onClick={showModal}
+            onClick={() => setIsModalVisible(true)}
             className="bg-indigo-600 hover:bg-indigo-700 text-white transition duration-300 rounded-lg py-2"
           >
             เพิ่มงาน
           </Button>
+
+          {/* ส่ง tasks ไปยัง search และรับผลลัพธ์กลับมา */}
+          <SearchAutocomplete
+            tasks={allTasks}
+            onSearchResult={setFilteredTasks}
+          />
         </section>
 
         <section>
-          <h2 className="text-3xl font-semibold text-gray-800 mb-4 text-center">
-            รายการงาน
+          <h2 className="text-3xl font-semibold text-gray-800 text-center">
+            รายการงานของคุณ
           </h2>
-          {tasks.length === 0 ? (
-            <div className="flex flex-col items-center justify-center gap-4 pt-40">
+          {filteredTasks.length === 0 ? (
+            <div className="flex flex-col items-center mt-15 justify-center gap-4 pt-40">
               <Empty description={false} />
               <p className="text-gray-600 text-center text-xl">
                 ไม่มีงานในรายการ
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {tasks.map((task) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-15">
+              {filteredTasks.map((task) => (
                 <div
                   key={task.id}
                   className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
@@ -93,7 +106,10 @@ const ManageTasks: React.FC = () => {
         </section>
       </div>
 
-      <DialogAddWork open={isModalVisible} onClose={handleCancel} />
+      <DialogAddWork
+        open={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+      />
     </div>
   );
 };

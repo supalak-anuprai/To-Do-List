@@ -1,32 +1,31 @@
-import { /* Navigate, */ Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import NavbarHeader from "./components/NavBar/navbarHeader";
 import { Layout, theme } from "antd";
 import FooterApp from "./components/Footer/footerApp";
 import { Content } from "antd/es/layout/layout";
-import { useUser } from "@clerk/clerk-react";
 import ManageTasks from "./pages/ManageTasks";
 import Hero from "./pages/Hero";
-import View403 from "./components/Status/View403";
-import LoadingApp from "./components/Loading/LodingApp";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import { useSelector } from "react-redux";
+import { RootState } from "./store";
 
 //-----------------------------------------------------------------
 
 //-----------------------------------------------------------------
 
 function App() {
-  const { user, isSignedIn, isLoaded } = useUser();
-
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  if (!isLoaded) {
-    return <LoadingApp />;
-  }
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
 
   return (
     <Layout>
-      <NavbarHeader user={user} />
+      <NavbarHeader isAuthenticated={isAuthenticated} />
       <Content>
         <div
           style={{
@@ -39,7 +38,23 @@ function App() {
 
             <Route
               path="/ManageTasks"
-              element={isSignedIn ? <ManageTasks /> : <View403 />}
+              element={
+                isAuthenticated ? <ManageTasks /> : <Navigate to="/login" />
+              }
+            />
+
+            <Route
+              path="/Register"
+              element={
+                !isAuthenticated ? <Register /> : <Navigate to="/ManageTasks" />
+              }
+            />
+
+            <Route
+              path="/login"
+              element={
+                !isAuthenticated ? <Login /> : <Navigate to="/ManageTasks" />
+              }
             />
           </Routes>
         </div>

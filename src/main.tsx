@@ -8,17 +8,18 @@ import "antd/dist/reset.css"; // กำหนดสไตล์พื้นฐ�
 import "./index.css";
 import { Toaster } from "react-hot-toast";
 import { PersistGate } from "redux-persist/integration/react";
-import { ClerkProvider } from "@clerk/clerk-react";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 
-if (!PUBLISHABLE_KEY) {
+if (!CLIENT_ID) {
   throw new Error("Missing Publishable Key");
 }
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    {/* <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/"> */}
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <BrowserRouter>
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
           </BrowserRouter>
         </PersistGate>
       </Provider>
-    </ClerkProvider>
+    </GoogleOAuthProvider>
+    {/* </ClerkProvider> */}
   </StrictMode>
 );
