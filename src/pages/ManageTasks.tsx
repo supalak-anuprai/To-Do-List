@@ -5,7 +5,7 @@ import { deleteTask } from "../features/tasks/tasksSlice";
 import { Button, Empty, Modal } from "antd";
 import toast from "react-hot-toast";
 import DialogAddWork from "../components/DialogModal/dialogAddWork";
-import SearchAutocomplete from "../components/AutocompleteSearch/searchTasks";
+// import SearchAutocomplete from "../components/AutocompleteSearch/searchTasks";
 
 const ManageTasks: React.FC = () => {
   const dispatch = useDispatch();
@@ -16,7 +16,6 @@ const ManageTasks: React.FC = () => {
   const allTasks = useSelector((state: RootState) =>
     state.tasks.tasks.filter((task) => task.userEmail === user?.email)
   );
-
   const [filteredTasks, setFilteredTasks] = useState(allTasks);
 
   useEffect(() => {
@@ -59,10 +58,10 @@ const ManageTasks: React.FC = () => {
           </Button>
 
           {/* ส่ง tasks ไปยัง search และรับผลลัพธ์กลับมา */}
-          <SearchAutocomplete
+          {/* <SearchAutocomplete
             tasks={allTasks}
             onSearchResult={setFilteredTasks}
-          />
+          /> */}
         </section>
 
         <section>
