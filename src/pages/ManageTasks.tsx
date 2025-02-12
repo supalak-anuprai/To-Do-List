@@ -10,6 +10,7 @@ import SearchAutocomplete from "../components/AutocompleteSearch/searchTasks";
 const ManageTasks: React.FC = () => {
   const dispatch = useDispatch();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<any>(null); // ใช้สำหรับเก็บงานที่จะแก้ไข
   const user = useSelector((state: RootState) => state.auth.user);
 
   const allTasks = useSelector((state: RootState) =>
@@ -38,6 +39,11 @@ const ManageTasks: React.FC = () => {
         toast.success("ลบงานแล้ว");
       },
     });
+  };
+
+  const handleEdit = (task: any) => {
+    setTaskToEdit(task); // ตั้งค่า task ที่จะแก้ไข
+    setIsModalVisible(true); // เปิด Modal
   };
 
   return (
@@ -75,7 +81,7 @@ const ManageTasks: React.FC = () => {
               {filteredTasks.map((task) => (
                 <div
                   key={task.id}
-                  className="bg-white p-6 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300"
+                  className="bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
                 >
                   <h3 className="text-xl font-semibold text-gray-800">
                     {task.title}
@@ -99,6 +105,14 @@ const ManageTasks: React.FC = () => {
                   >
                     ลบงาน
                   </Button>
+                  <br className="my-4" />
+                  <Button
+                    type="primary"
+                    onClick={() => handleEdit(task)}
+                    className=" w-full bg-amber-400-300-600 hover:bg-blue-700 text-white transition duration-300 rounded-lg"
+                  >
+                    แก้ไขงาน
+                  </Button>
                 </div>
               ))}
             </div>
@@ -109,6 +123,7 @@ const ManageTasks: React.FC = () => {
       <DialogAddWork
         open={isModalVisible}
         onClose={() => setIsModalVisible(false)}
+        task={taskToEdit} // ส่งงานที่จะแก้ไข
       />
     </div>
   );
