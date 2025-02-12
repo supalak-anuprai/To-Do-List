@@ -30,7 +30,13 @@ const Register: React.FC = () => {
       return;
     }
     // สำหรับโปรเจกต์นี้ สมมติว่าการสมัครสมาชิกสำเร็จ
-    dispatch(register({ email: values.email, password: values.password }));
+    dispatch(
+      register({
+        email: values.email,
+        password: values.password,
+        provider: "web",
+      })
+    );
     if (user?.users?.find((user) => user.email === values.email)) {
       return toast.error("มีผู้ใช้นี้อยู่แล้ว");
     }
