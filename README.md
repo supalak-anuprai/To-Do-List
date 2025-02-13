@@ -2,7 +2,7 @@
 # To-Do-List
 
 ## ขั้นตอนการเริ่มต้นใช้งาน
-1. **ทำการ Pull To Do List**  
+1. **ทำการ clone To Do List**  
    ```bash
    git clone https://github.com/supalak-anuprai/To-Do-List.git
    ```
